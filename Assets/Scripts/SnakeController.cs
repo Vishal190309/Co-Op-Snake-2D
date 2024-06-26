@@ -1,21 +1,22 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SnakeController : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] private float speed =10f;
+    [SerializeField] private float snakeSpeed = 4f;
     [SerializeField] private Vector2 movementDirection = Vector2.left;
     [SerializeField] private Vector2 distanceTravled;
     [SerializeField] private Transform snakeBody;
     [SerializeField] private List<Transform> snakeBodys;
+    [SerializeField] int ScoreMultipler = 2;
+    [SerializeField] PowerUpService powerUpService;
+    int Score;
+
 
     void Start()
     {
-        snakeBodys.Add(transform);   
+        snakeBodys.Add(transform);
     }
 
     private void FixedUpdate()
@@ -26,49 +27,36 @@ public class SnakeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         checkInput();
         checkIfOutOfBounds();
+
     }
 
 
 
     void moveSnake()
     {
-        for(int i = snakeBodys.Count-1;i>0;i--)
+        for (int i = snakeBodys.Count - 1; i > 0; i--)
         {
-            snakeBodys[i].position = snakeBodys[i-1].position;
+            snakeBodys[i].position = snakeBodys[i - 1].position;
         }
-        
+
         Vector2 position = transform.position;
-        distanceTravled = movementDirection * speed * Time.deltaTime;
+        distanceTravled = movementDirection * snakeSpeed * Time.deltaTime;
         position += distanceTravled;
         transform.position = position;
 
 
     }
 
-    public bool getPositionOccupied(Vector3 position)
-    {
-        foreach(Transform t in snakeBodys)
-        {
-            if(Vector2.Distance(t.position,position) < 0.35f) 
-                return true;
-        }
-        return false;
-    }
-
-    public float getSnakeSize()
-    {
-       return snakeBodys.Count;
-    }
 
 
     void checkIfOutOfBounds()
     {
         Vector2 snakePosition = Camera.main.WorldToScreenPoint(gameObject.transform.position);
 
-        if(snakePosition.x<0)
+        if (snakePosition.x < 0)
         {
             distanceTravled = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, snakePosition.y));
             transform.position = distanceTravled;
@@ -108,36 +96,58 @@ public class SnakeController : MonoBehaviour
         {
             movementDirection = Vector2.down;
         }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            IncreaseLength(1);
-        }
     }
 
 
 
-    public void IncreaseLength(float length)
+    public void IncreaseScoreAndLength(int newScore, float length)
     {
         if (snakeBodys.Count > 0)
         {
             Transform bodyOfSnake = Instantiate(snakeBody);
             bodyOfSnake.transform.position = snakeBodys[snakeBodys.Count - 1].position;
             snakeBodys.Add(bodyOfSnake);
+            if (powerUpService.getbScoreMultiplierEnabled())
+            {
+                Score += ScoreMultipler * newScore;
+            }
         }
-        
-        
+
+
     }
 
-    public void DecreaseLength(float length)
+    public void DecreaseScoreAndLength(int newScore, float length)
     {
         if (snakeBodys.Count > 0)
         {
             Destroy(snakeBodys[snakeBodys.Count - 1].gameObject);
             snakeBodys.RemoveAt(snakeBodys.Count - 1);
+            Score -= newScore;
         }
 
 
+
+    }
+
+
+    public bool getPositionOccupied(Vector3 position)
+    {
+        foreach (Transform t in snakeBodys)
+        {
+            if (Vector2.Distance(t.position, position) < 0.35f)
+                return true;
+        }
+        return false;
+    }
+
+    public float getSnakeSize()
+    {
+        return snakeBodys.Count;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        snakeSpeed = speed;
     }
 }
 

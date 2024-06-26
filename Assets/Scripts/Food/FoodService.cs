@@ -11,6 +11,7 @@ public class FoodService : MonoBehaviour
     [SerializeField] Vector2 spawnIntervalRange;
     float currentSpawnInterval =1f;
     [SerializeField] SnakeController snakeController;
+    [SerializeField] PowerUpService powerUpController;
     List<Transform> foodSpawned = new List<Transform>();
     float elapsedTime;
     private void Update()
@@ -25,23 +26,10 @@ public class FoodService : MonoBehaviour
     }
     void SpawnFood()
     {
-        if (snakeController.getSnakeSize() > 1)
-        {
-            switch (UnityEngine.Random.Range(0, foodControllers.Length))
-            {
-                case 0:
-                    SpawFoodObject(0);
-                    break;
-                case 1:
-                    SpawFoodObject(1);
-                    break;
-
-            }
-        }
-        else
-        {
-            SpawFoodObject(0);
-        }
+        GameObject controller = Instantiate(foodControllers[UnityEngine.Random.Range(0,foodControllers.Length)],transform);
+        controller.transform.position = getRandomPosition();
+        controller.SetActive(true);
+        foodSpawned.Add(controller.transform);
     }
 
     public void DestroyFood(GameObject gameObject)
@@ -50,14 +38,8 @@ public class FoodService : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void SpawFoodObject(int foodNo)
-    {
-        GameObject controller = Instantiate(foodControllers[foodNo], transform);
-        controller.transform.position = getRandomPosition();
-        foodSpawned.Add(controller.transform);
-    }
 
-    private bool getPositionOccupiedByFood(Vector3 position)
+    public bool getPositionOccupied(Vector3 position)
     {
         foreach (Transform t in foodSpawned)
         {
@@ -75,7 +57,7 @@ public class FoodService : MonoBehaviour
             float xPosition = UnityEngine.Random.Range(50, Screen.width - 50);
             float yPosition = UnityEngine.Random.Range(50, Screen.height - 50);
             position = Camera.main.ScreenToWorldPoint(new Vector2(xPosition, yPosition));
-        } while (snakeController.getPositionOccupied(position)||getPositionOccupiedByFood (position) );
+        } while (snakeController.getPositionOccupied(position)|| getPositionOccupied(position) || powerUpController.getPositionOccupied(position ));
         
         return position;
     }
@@ -88,6 +70,7 @@ public class Food
 {
     public FoodType type;
     public int length;
+    public int score;
 
 }
 public enum FoodType

@@ -6,7 +6,7 @@ using UnityEngine;
 public class FoodController : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] Food foodType;
+    [SerializeField] Food food;
     [SerializeField] float despawnTime = 5f;
     float elapsedTime = 0f;
     FoodService foodService;
@@ -15,14 +15,14 @@ public class FoodController : MonoBehaviour
     {
         if(collision.gameObject.tag == "SnakeHead")
         {
-            switch (foodType.type)
+            switch (food.type)
             {
                 case FoodType.MASS_GAINER:
-                    collision.gameObject.GetComponent<SnakeController>().IncreaseLength(foodType.length);
+                    collision.gameObject.GetComponent<SnakeController>().IncreaseScoreAndLength(food.length,food.score);
                     foodService.DestroyFood(gameObject);
                     break;
                 case FoodType.MASS_BURNER:
-                    collision.gameObject.GetComponent<SnakeController>().DecreaseLength(foodType.length);
+                    collision.gameObject.GetComponent<SnakeController>().DecreaseScoreAndLength(food.length, food.score);
                     foodService.DestroyFood(gameObject);
                     break;
             }
@@ -46,12 +46,12 @@ public class FoodController : MonoBehaviour
 
     public Food getFoodType()
     {
-        return foodType;
+        return food;
     }
 
     public void SetFoodType(Food type)
     {
-        foodType = type;
+        food = type;
     }
 
 
