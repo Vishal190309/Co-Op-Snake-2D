@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5781889962086620765}
   m_Layer: 0
   m_Name: MassGainerFood
-  m_TagString: Untagged
+  m_TagString: Food
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,8 +47,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foodType:
-    type: 0
+    type: 1
     length: 1
+  despawnTime: 10
 --- !u!212 &1209212078656368218
 SpriteRenderer:
   m_ObjectHideFlags: 0

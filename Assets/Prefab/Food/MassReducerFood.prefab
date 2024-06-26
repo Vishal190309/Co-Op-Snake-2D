@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 315496787379962457}
   m_Layer: 0
   m_Name: MassReducerFood
-  m_TagString: Untagged
+  m_TagString: Food
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,8 +47,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foodType:
-    type: 1
+    type: 0
     length: 1
+  despawnTime: 10
 --- !u!212 &5664604296092191737
 SpriteRenderer:
   m_ObjectHideFlags: 0

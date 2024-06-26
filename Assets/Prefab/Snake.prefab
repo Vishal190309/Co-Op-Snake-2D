@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 364271132756218634}
   m_Layer: 0
   m_Name: Snake
-  m_TagString: Untagged
+  m_TagString: SnakeHead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -143,7 +143,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -161,5 +161,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6460b8b6f7d22294fbd37ae68d80d2ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 3
   movementDirection: {x: -1, y: 0}
+  distanceTravled: {x: 0, y: 0}
+  snakeBody: {fileID: 6682201100759014902, guid: ad62d2167c5a9dd4aa5bc3f93b5f0962, type: 3}
+  snakeBodys: []

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SnakeController : MonoBehaviour
@@ -11,7 +12,6 @@ public class SnakeController : MonoBehaviour
     [SerializeField] private Vector2 distanceTravled;
     [SerializeField] private Transform snakeBody;
     [SerializeField] private List<Transform> snakeBodys;
-    float distanceBetweenTwoBodies = 0.33f;
 
     void Start()
     {
@@ -46,6 +46,21 @@ public class SnakeController : MonoBehaviour
         transform.position = position;
 
 
+    }
+
+    public bool getPositionOccupied(Vector3 position)
+    {
+        foreach(Transform t in snakeBodys)
+        {
+            if(Vector2.Distance(t.position,position) < 0.35f) 
+                return true;
+        }
+        return false;
+    }
+
+    public float getSnakeSize()
+    {
+       return snakeBodys.Count;
     }
 
 
@@ -112,6 +127,17 @@ public class SnakeController : MonoBehaviour
         }
         
         
+    }
+
+    public void DecreaseLength(float length)
+    {
+        if (snakeBodys.Count > 0)
+        {
+            Destroy(snakeBodys[snakeBodys.Count - 1].gameObject);
+            snakeBodys.RemoveAt(snakeBodys.Count - 1);
+        }
+
+
     }
 }
 
