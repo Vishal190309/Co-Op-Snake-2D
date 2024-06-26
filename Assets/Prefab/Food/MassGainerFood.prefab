@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2134802845780098262
 Transform:
   m_ObjectHideFlags: 0
@@ -46,9 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a573662ceef10ee469f7c0fc77590d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  foodType:
-    type: 1
+  food:
+    type: 0
     length: 1
+    score: 10
   despawnTime: 10
 --- !u!212 &1209212078656368218
 SpriteRenderer:
