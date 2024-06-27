@@ -248,7 +248,7 @@ MonoBehaviour:
   foodControllers:
   - {fileID: 7042299108636975044, guid: 8942605edef87c94b8432fd5f011b548, type: 3}
   - {fileID: 7042299108636975044, guid: 2297f57f81d4ca84fbac03aa0e7c915a, type: 3}
-  spawnIntervalRange: {x: 0.5, y: 1}
+  spawnIntervalRange: {x: 2, y: 5}
   snakeController: {fileID: 1375670678}
   powerUpController: {fileID: 1448425017}
 --- !u!1 &180472364
@@ -1589,7 +1589,7 @@ MonoBehaviour:
   - {fileID: -2148163747222072613, guid: 4bb38105e397ad342b8331869797e9f5, type: 3}
   - {fileID: -2148163747222072613, guid: c75b95e98c889e54da7ec80ef4c799bf, type: 3}
   spawnedPowerup: []
-  powerUpSpawnTimeRange: {x: 1, y: 1}
+  powerUpSpawnTimeRange: {x: 10, y: 15}
 --- !u!4 &1448425018
 Transform:
   m_ObjectHideFlags: 0
