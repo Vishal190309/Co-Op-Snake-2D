@@ -1,12 +1,14 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class SnakeController : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] private float snakeSpeed = 4f;
+    float snakeSpeed;
     [SerializeField] private Vector2 movementDirection = Vector2.left;
     [SerializeField] private Transform snakeBody;
     [SerializeField] private List<Transform> snakeBodys;
@@ -14,7 +16,6 @@ public class SnakeController : MonoBehaviour
     [SerializeField] PowerUpService powerUpService;
     [SerializeField] UIController uiController;
     [SerializeField] SnakeType snakeType;
-    bool bOutOfScreen = false;
     int Score;
     private bool bShieldEnabled;
     private bool bScoreMultiplierEnabled;
@@ -22,25 +23,32 @@ public class SnakeController : MonoBehaviour
     float currentShieldTime;
     float currentScoreMultiplierTime;
     float currentSpeedMultiplierTime;
-
+    public float currentUpdateTime;
+    public bool canMove = true;
 
     void Start()
     {
+        SetSpeed(Const.normalSpeed);
+        currentUpdateTime = Const.normalUpdateTime;
         snakeBodys.Add(transform);
+        
     }
 
     private void FixedUpdate()
     {
-        Debug.Log("moveSnake");
-        moveSnake();
+        
         
     }
+
+    
 
     // Update is called once per frame
     void Update()
     {
-
-        Debug.Log("update");
+        if(canMove && Time.timeScale ==1f)
+        {
+            StartCoroutine(moveSnakeRoutine());
+        }
         checkIfOutOfBounds();
         checkInput();
         updateScoreBoostTimer();
@@ -123,17 +131,23 @@ public class SnakeController : MonoBehaviour
 
         if (bSpeedMultiplierEnabled)
         {
-            SetSpeed(Const.increasdSpeed);
-            Time.fixedDeltaTime = 0.05f;
+            currentUpdateTime = Const.fastUpdateTime;
         }
         else
         {
-            SetSpeed(Const.normalSpeed);
-            Time.fixedDeltaTime = 0.08f;
+            currentUpdateTime = Const.normalUpdateTime;
         }
         currentSpeedMultiplierTime = 0f;
     }
 
+
+    IEnumerator moveSnakeRoutine()
+    {
+        canMove = false;
+        moveSnake();
+        yield return new WaitForSeconds(currentUpdateTime);
+        canMove = true;
+    }
 
     void moveSnake()
     {
@@ -143,10 +157,9 @@ public class SnakeController : MonoBehaviour
         }
 
         Vector2 position = transform.position;
-        position += movementDirection * snakeSpeed * Time.deltaTime; ;
+        position += movementDirection * snakeSpeed;
         transform.position = position;
-
-
+        
     }
 
 
@@ -177,7 +190,7 @@ public class SnakeController : MonoBehaviour
 
     void checkInput()
     {
-        if(!bOutOfScreen)
+        if (snakeType == SnakeType.SNAKE1)
         {
             if (Input.GetKeyDown(KeyCode.A) && movementDirection != Vector2.right)
             {
@@ -196,6 +209,25 @@ public class SnakeController : MonoBehaviour
                 movementDirection = Vector2.down;
             }
         }
+       
+        if (snakeType == SnakeType.SNAKE2) {
+            if (Input.GetKeyDown(KeyCode.LeftArrow) && movementDirection != Vector2.right)
+            {
+                movementDirection = Vector2.left;
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow) && movementDirection != Vector2.left)
+            {
+                movementDirection = Vector2.right;
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) && movementDirection != Vector2.down)
+            {
+                movementDirection = Vector2.up;
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) && movementDirection != Vector2.up)
+            {
+                movementDirection = Vector2.down;
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape)){
             uiController.ShowPauseMenu();
@@ -207,7 +239,9 @@ public class SnakeController : MonoBehaviour
     {
         if (collision.gameObject.tag == "SnakeBody")
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            uiController.ShowGameOverUI(false, snakeType);
+        }else if(collision.gameObject.tag == "SnakeHead"){
+            uiController.ShowGameOverUI(true,snakeType);
         }
     }
 
@@ -219,8 +253,8 @@ public class SnakeController : MonoBehaviour
         {
             for (int i =0; i < length; i++)
             {
-                Transform bodyOfSnake = Instantiate(snakeBody);
-                bodyOfSnake.transform.position = snakeBodys[snakeBodys.Count - 1].position;
+                Transform bodyOfSnake = Instantiate(snakeBody ,new Vector3(-100f,-100f,0f),new Quaternion(0f,0f,0f,0f));
+                snakeBody.gameObject.SetActive(true);
                 snakeBodys.Add(bodyOfSnake);
             }
           

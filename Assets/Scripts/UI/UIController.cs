@@ -25,8 +25,7 @@ public class UIController : MonoBehaviour
     [SerializeField] Image player2ScoreMultiplierImage;
     [SerializeField] Image plauyer2SpeedImage;
     [SerializeField] Text player2ScoreText;
-
-    bool bIsGamePaused =false ;
+    [SerializeField] Text winText;
     void Start()
     {
         
@@ -105,43 +104,60 @@ public class UIController : MonoBehaviour
 
     public void ShowPauseMenu()
     {
-        if (bIsGamePaused)
+       
+        PauseUI.SetActive(true);
+        GameManager.Instance.PauseAudio(GameManager.AudioType.BACKGROUN_MUSIC);
+        Time.timeScale = 0f;
+    }
+
+    public void ShowGameOverUI(bool bHeadCollision , SnakeType snakeType)
+    {
+        GameOverUI.SetActive(true);
+        GameManager.Instance.PauseAudio(GameManager.AudioType.BACKGROUN_MUSIC);
+        Time.timeScale = 0f;
+        Debug.Log((player1ScoreText.text.Split(" ")[1]));
+        if (!GameManager.Instance.isTwoPlayer)
         {
-            PauseUI.SetActive(false);
-            Time.timeScale = 1f;
+            if (float.Parse(player1ScoreText.text.Split(" ")[1]) > PlayerPrefs.GetFloat(Const.highScore))
+            {
+                PlayerPrefs.SetFloat(Const.highScore, float.Parse(player1ScoreText.text.Split(" ")[1]));
+            }
+            winText.text = "You Score : " + player1ScoreText.text.Split(" ")[1];
+        }
+        else if(bHeadCollision)
+        {
+            winText.text = (float.Parse(player1ScoreText.text.Split(" ")[1]) > float.Parse(player2ScoreText.text.Split(" ")[1])) ? "GREEN HAS HIGHER SCORE THAN BLUE. GREEN WINS !" : "YELLOW HAS HIGHER SCORE THAN GREEN. BLUE WINS !";
+            if (float.Parse(player1ScoreText.text.Split(" ")[1]) == float.Parse(player2ScoreText.text.Split(" ")[1]))
+                winText.text = "GREEN AND BLUE HAVE SAME SCORE. IT'S A DRAW !";
         }
         else
         {
-            PauseUI.SetActive(true);
-            Time.timeScale = 0f;
+            winText.text = snakeType == SnakeType.SNAKE2 ? "YELLOW COLLIDED! GREEN WON" : "GREEN COLLIDED! YELLOW WON";
         }
-    }
-
-    public void ShowGameOverUI()
-    {
-        GameOverUI.SetActive(true);
-        if (!GameManager.Instance.isTwoPlayer)
-        {
-            //PlayerPrefs.SetFloat(Const.highScore,);
-        }
-        Time.timeScale = 0f;
+       
     }
 
     public void Resume()
     {
+        GameManager.Instance.PlaySoundEffect(GameManager.AudioType.BUTTON_CLICK);
         PauseUI.SetActive(false);
+        GameManager.Instance.PlayAudio(GameManager.AudioType.BACKGROUN_MUSIC);
         Time.timeScale = 1f;
     }
 
     public void Restart()
     {
+        GameManager.Instance.PlaySoundEffect(GameManager.AudioType.BUTTON_CLICK);
         Time.timeScale = 1f;
+        GameManager.Instance.PlayAudio(GameManager.AudioType.BACKGROUN_MUSIC);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void MainMenu()
     {
+        GameManager.Instance.PlaySoundEffect(GameManager.AudioType.BUTTON_CLICK);
         Time.timeScale = 1f;
+        GameManager.Instance.PlayAudio(GameManager.AudioType.BACKGROUN_MUSIC);
         SceneManager.LoadScene(1);
     }
 
