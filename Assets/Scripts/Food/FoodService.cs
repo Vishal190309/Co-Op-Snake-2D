@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class FoodService : MonoBehaviour
@@ -26,10 +27,20 @@ public class FoodService : MonoBehaviour
     }
     void SpawnFood()
     {
-        GameObject controller = Instantiate(foodControllers[UnityEngine.Random.Range(0,foodControllers.Length)],transform);
-        controller.transform.position = getRandomPosition();
-        controller.SetActive(true);
-        foodSpawned.Add(controller.transform);
+        if (snakeController.getSnakeSize() > 2)
+        {
+            GameObject controller = Instantiate(foodControllers[UnityEngine.Random.Range(0, foodControllers.Length)], transform);
+            controller.transform.position = getRandomPosition();
+            controller.SetActive(true);
+            foodSpawned.Add(controller.transform);
+        }
+        else
+        {
+            GameObject controller = Instantiate(foodControllers[0], transform);
+            controller.transform.position = getRandomPosition();
+            controller.SetActive(true);
+            foodSpawned.Add(controller.transform);
+        }
     }
 
     public void DestroyFood(GameObject gameObject)
@@ -55,14 +66,17 @@ public class FoodService : MonoBehaviour
         do
         {
             float xPosition = UnityEngine.Random.Range(50, Screen.width - 50);
-            float yPosition = UnityEngine.Random.Range(50, Screen.height - 50);
+            float yPosition = UnityEngine.Random.Range(50, Screen.height - 130);
             position = Camera.main.ScreenToWorldPoint(new Vector2(xPosition, yPosition));
         } while (snakeController.getPositionOccupied(position)|| getPositionOccupied(position) || powerUpController.getPositionOccupied(position ));
         
         return position;
     }
 
-   
+    
+    
+
+
 }
 
 [Serializable]
