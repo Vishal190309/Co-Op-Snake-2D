@@ -16,7 +16,9 @@ public class GameManager : MonoBehaviour
         if(instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            
+
+            DontDestroyOnLoad(instance);
         }else
         {
             Destroy(gameObject);
@@ -30,13 +32,13 @@ public class GameManager : MonoBehaviour
             soundInfo.audioSource.loop = soundInfo.loop;
         }
 
-
     }
 
     private void Start()
     {
-        //Instance.PlayAudio(AudioType.MAIN_MENU);
+        Instance.PlayAudio(AudioType.BACKGROUN_MUSIC);
     }
+    
 
 
     public void PlayAudio(AudioType audioType)
@@ -50,6 +52,19 @@ public class GameManager : MonoBehaviour
         AudioInfo soundInfo = Array.Find(sounds, item => item.audioType == audioType);
         soundInfo.audioSource.Stop();
     }
+
+    public void PauseAudio(AudioType audioType)
+    {
+        AudioInfo soundInfo = Array.Find(sounds, item => item.audioType == audioType);
+        soundInfo.audioSource.Pause();
+    }
+
+    public void PlaySoundEffect(AudioType audioType)
+    {
+        AudioInfo soundInfo = Array.Find(sounds, item => item.audioType == audioType);
+        soundInfo.audioSource.PlayOneShot(soundInfo.audioClip);
+    }
+
 
     [Serializable]
     public class AudioInfo
@@ -66,8 +81,7 @@ public class GameManager : MonoBehaviour
     }
     public enum AudioType
     {
-        MAIN_MENU,
-        LEVEL,
+        BACKGROUN_MUSIC,
         BUTTON_CLICK,
         FOOD_PICKUP,
         POWER_PICKUP,

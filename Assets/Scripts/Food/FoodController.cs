@@ -18,10 +18,12 @@ public class FoodController : MonoBehaviour
             switch (food.type)
             {
                 case FoodType.MASS_GAINER:
+                    GameManager.Instance.PlaySoundEffect(GameManager.AudioType.FOOD_PICKUP);
                     collision.gameObject.GetComponent<SnakeController>().IncreaseScoreAndLength(food.score,food.length);
                     foodService.DestroyFood(gameObject);
                     break;
                 case FoodType.MASS_BURNER:
+                    GameManager.Instance.PlaySoundEffect(GameManager.AudioType.FOOD_PICKUP);
                     collision.gameObject.GetComponent<SnakeController>().DecreaseScoreAndLength(food.score, food.length);
                     foodService.DestroyFood(gameObject);
                     break;

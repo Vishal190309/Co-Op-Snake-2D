@@ -38,14 +38,17 @@ public class PowerUpController : MonoBehaviour
             switch (powerupType)
             {
                 case PowerupType.SHIELD:
+                    GameManager.Instance.PlaySoundEffect(GameManager.AudioType.POWER_PICKUP);
                     collision.gameObject.GetComponent<SnakeController>().enableShield(true);
                     powerupService.DestroyPowerup(gameObject);
                     break;
                 case PowerupType.SCORE_BOOST:
+                    GameManager.Instance.PlaySoundEffect(GameManager.AudioType.POWER_PICKUP);
                     collision.gameObject.GetComponent<SnakeController>().enableScoreMultiplier(true);
                     powerupService.DestroyPowerup(gameObject);
                     break;
                 case PowerupType.SPEED_UP:
+                    GameManager.Instance.PlaySoundEffect(GameManager.AudioType.POWER_PICKUP);
                     collision.gameObject.GetComponent<SnakeController>().enableSpeedMultiplier(true);
                     powerupService.DestroyPowerup(gameObject);
                     break;
