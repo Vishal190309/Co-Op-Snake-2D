@@ -5,7 +5,6 @@ using UnityEngine;
 public class PowerUpController : MonoBehaviour
 {
     [SerializeField] PowerupType powerupType;
-    [SerializeField] float powerupDuration = 7f;
     [SerializeField] float despawnTime = 10f;
     PowerUpService powerupService;
     float elapsedTime;
@@ -30,10 +29,7 @@ public class PowerUpController : MonoBehaviour
     {
         return powerupType;
     }
-    public float getPowerupDuration()
-    {
-        return powerupDuration;
-    }
+   
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -42,15 +38,15 @@ public class PowerUpController : MonoBehaviour
             switch (powerupType)
             {
                 case PowerupType.SHIELD:
-                    powerupService.enableShield(true);
+                    collision.gameObject.GetComponent<SnakeController>().enableShield(true);
                     powerupService.DestroyPowerup(gameObject);
                     break;
                 case PowerupType.SCORE_BOOST:
-                    powerupService.enableScoreMultiplier(true);
+                    collision.gameObject.GetComponent<SnakeController>().enableScoreMultiplier(true);
                     powerupService.DestroyPowerup(gameObject);
                     break;
                 case PowerupType.SPEED_UP:
-                    powerupService.enableSpeedMultiplier(true);
+                    collision.gameObject.GetComponent<SnakeController>().enableSpeedMultiplier(true);
                     powerupService.DestroyPowerup(gameObject);
                     break;
             }

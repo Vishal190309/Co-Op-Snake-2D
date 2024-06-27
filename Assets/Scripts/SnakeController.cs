@@ -12,9 +12,16 @@ public class SnakeController : MonoBehaviour
     [SerializeField] private List<Transform> snakeBodys;
     [SerializeField] int ScoreMultipler = 2;
     [SerializeField] PowerUpService powerUpService;
-    public GameplayUI gameplayUI;
+    [SerializeField] UIController uiController;
+    [SerializeField] SnakeType snakeType;
     bool bOutOfScreen = false;
     int Score;
+    private bool bShieldEnabled;
+    private bool bScoreMultiplierEnabled;
+    private bool bSpeedMultiplierEnabled;
+    float currentShieldTime;
+    float currentScoreMultiplierTime;
+    float currentSpeedMultiplierTime;
 
 
     void Start()
@@ -24,19 +31,108 @@ public class SnakeController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Debug.Log("moveSnake");
         moveSnake();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
 
-
+        Debug.Log("update");
         checkIfOutOfBounds();
         checkInput();
+        updateScoreBoostTimer();
+        updateShieldTimer();
+        updateSpeedBoostTimer();
 
     }
 
+    void updateShieldTimer()
+    {
+        if (bShieldEnabled)
+        {
+
+            currentShieldTime += Time.deltaTime;
+            if (currentShieldTime >= Const.shieldPowerupDuration)
+            {
+                enableShield(false);
+            }
+        }
+    }
+
+    void updateScoreBoostTimer()
+    {
+        if (bScoreMultiplierEnabled)
+        {
+            currentScoreMultiplierTime += Time.deltaTime;
+            if (currentScoreMultiplierTime >= Const.scoreMultiplierPowerupDuration)
+            {
+                enableScoreMultiplier(false);
+            }
+        }
+    }
+
+    void updateSpeedBoostTimer()
+    {
+        if (bSpeedMultiplierEnabled)
+        {
+            currentSpeedMultiplierTime += Time.deltaTime;
+            if (currentSpeedMultiplierTime >= Const.speedBoostPowerupDuration)
+            {
+                enableSpeedMultiplier(false);
+            }
+        }
+    }
+
+    public bool getShieldEnabled()
+    {
+        return bShieldEnabled;
+    }
+
+    public void enableShield(bool bEnabled)
+    {
+        currentShieldTime = 0f;
+        bShieldEnabled = bEnabled;
+        uiController.EnableShield(snakeType, bEnabled);
+    }
+
+    public bool getbScoreMultiplierEnabled()
+    {
+        return bScoreMultiplierEnabled;
+    }
+
+    public void enableScoreMultiplier(bool bEnabled)
+    {
+        currentScoreMultiplierTime = 0f;
+        bScoreMultiplierEnabled = bEnabled;
+        uiController.EnableScoreMultiplier(snakeType, bEnabled);
+    }
+
+    public bool getSpeedMultiplierEnabled()
+    {
+        return bSpeedMultiplierEnabled;
+    }
+
+    public void enableSpeedMultiplier(bool bEnabled)
+    {
+        currentSpeedMultiplierTime = 0f;
+        bSpeedMultiplierEnabled = bEnabled;
+        uiController.EnableSpeedMultiplier(snakeType, bEnabled);
+
+        if (bSpeedMultiplierEnabled)
+        {
+            SetSpeed(Const.increasdSpeed);
+            Time.fixedDeltaTime = 0.05f;
+        }
+        else
+        {
+            SetSpeed(Const.normalSpeed);
+            Time.fixedDeltaTime = 0.08f;
+        }
+        currentSpeedMultiplierTime = 0f;
+    }
 
 
     void moveSnake()
@@ -100,12 +196,15 @@ public class SnakeController : MonoBehaviour
                 movementDirection = Vector2.down;
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape)){
+            uiController.ShowPauseMenu();
+        }
        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.tag);
         if (collision.gameObject.tag == "SnakeBody")
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -125,15 +224,15 @@ public class SnakeController : MonoBehaviour
                 snakeBodys.Add(bodyOfSnake);
             }
           
-            if (powerUpService.getbScoreMultiplierEnabled())
+            if (getbScoreMultiplierEnabled())
             {
                 Score += ScoreMultipler * newScore;
-                gameplayUI.SetScore(Score);
+                uiController.SetScore(snakeType,Score);
             }
             else
             {
                 Score +=  newScore;
-                gameplayUI.SetScore(Score);
+                uiController.SetScore(snakeType, Score);
             }
         }
 
@@ -150,7 +249,7 @@ public class SnakeController : MonoBehaviour
                 snakeBodys.RemoveAt(snakeBodys.Count - 1);
             }
             Score -= newScore;
-            gameplayUI.SetScore(Score);
+            uiController.SetScore(snakeType, Score);
         }
 
 
