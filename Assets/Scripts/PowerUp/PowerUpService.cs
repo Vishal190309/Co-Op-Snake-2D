@@ -85,6 +85,7 @@ public class PowerUpService : MonoBehaviour
 
     public void enableShield(bool bEnabled)
     {
+        snakeController.gameplayUI.EnableShield(bEnabled);
         currentShieldTime = 0f;
         bShieldEnabled = bEnabled;
     }
@@ -96,6 +97,7 @@ public class PowerUpService : MonoBehaviour
 
     public void enableScoreMultiplier(bool bEnabled)
     {
+        snakeController.gameplayUI.EnableScoreMultiplier(bEnabled);
         currentScoreMultiplierTime = 0f;
         bScoreMultiplierEnabled = bEnabled;
     }
@@ -107,17 +109,18 @@ public class PowerUpService : MonoBehaviour
 
     public void enableSpeedMultiplier(bool bEnabled)
     {
+        snakeController.gameplayUI.EnableSpeedMultiplier(bEnabled);
         currentSpeedMultiplierTime = 0f;
         bSpeedMultiplierEnabled = bEnabled;
 
         if (bSpeedMultiplierEnabled)
         {
-            snakeController.SetSpeed(5.5f);
+            snakeController.SetSpeed(Const.increasdSpeed);
             Time.fixedDeltaTime = 0.05f;
         }
         else
         {
-            snakeController.SetSpeed(4f);
+            snakeController.SetSpeed(Const.normalSpeed);
             Time.fixedDeltaTime = 0.08f;
         }
         currentSpeedMultiplierTime = 0f;
@@ -143,7 +146,7 @@ public class PowerUpService : MonoBehaviour
         do
         {
             float xPosition = UnityEngine.Random.Range(50, Screen.width - 50);
-            float yPosition = UnityEngine.Random.Range(50, Screen.height - 50);
+            float yPosition = UnityEngine.Random.Range(50, Screen.height - 130);
             position = Camera.main.ScreenToWorldPoint(new Vector2(xPosition, yPosition));
         } while (snakeController.getPositionOccupied(position) || getPositionOccupied(position) || foodControlller.getPositionOccupied(position));
         return position;

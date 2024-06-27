@@ -1,16 +1,19 @@
 using System.Collections.Generic;
+using UnityEditor.Build;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SnakeController : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private float snakeSpeed = 4f;
     [SerializeField] private Vector2 movementDirection = Vector2.left;
-    [SerializeField] private Vector2 distanceTravled;
     [SerializeField] private Transform snakeBody;
     [SerializeField] private List<Transform> snakeBodys;
     [SerializeField] int ScoreMultipler = 2;
     [SerializeField] PowerUpService powerUpService;
+    public GameplayUI gameplayUI;
+    bool bOutOfScreen = false;
     int Score;
 
 
@@ -28,8 +31,9 @@ public class SnakeController : MonoBehaviour
     void Update()
     {
 
-        checkInput();
+
         checkIfOutOfBounds();
+        checkInput();
 
     }
 
@@ -43,8 +47,7 @@ public class SnakeController : MonoBehaviour
         }
 
         Vector2 position = transform.position;
-        distanceTravled = movementDirection * snakeSpeed * Time.deltaTime;
-        position += distanceTravled;
+        position += movementDirection * snakeSpeed * Time.deltaTime; ;
         transform.position = position;
 
 
@@ -55,46 +58,57 @@ public class SnakeController : MonoBehaviour
     void checkIfOutOfBounds()
     {
         Vector2 snakePosition = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-
-        if (snakePosition.x < 0)
+        if (snakePosition.x < 0f)
         {
-            distanceTravled = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, snakePosition.y));
-            transform.position = distanceTravled;
+            transform.position = new Vector2(Const.wallLeftOffset, gameObject.transform.position.y);
         }
         else if (snakePosition.x > Screen.width)
         {
-            distanceTravled = Camera.main.ScreenToWorldPoint(new Vector2(0f, snakePosition.y));
-            transform.position = distanceTravled;
+            transform.position = new Vector2(-Const.wallLeftOffset, gameObject.transform.position.y);
         }
-        else if (snakePosition.y < 0)
+        else if (snakePosition.y < 0f)
         {
-            distanceTravled = Camera.main.ScreenToWorldPoint(new Vector2(snakePosition.x, Screen.height));
-            transform.position = distanceTravled;
+            transform.position = new Vector2(gameObject.transform.position.x, Const.wallTopOffset);
         }
-        else if (snakePosition.y > Screen.height)
+        else if (snakePosition.y > Screen.height - 80f)
         {
-            distanceTravled = Camera.main.ScreenToWorldPoint(new Vector2(snakePosition.x, 0f));
-            transform.position = distanceTravled;
+            transform.position = new Vector2(gameObject.transform.position.x, Const.wallBottomOffset);
         }
+
     }
+
+   
 
     void checkInput()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if(!bOutOfScreen)
         {
-            movementDirection = Vector2.left;
+            if (Input.GetKeyDown(KeyCode.A) && movementDirection != Vector2.right)
+            {
+                movementDirection = Vector2.left;
+            }
+            else if (Input.GetKeyDown(KeyCode.D) && movementDirection != Vector2.left)
+            {
+                movementDirection = Vector2.right;
+            }
+            else if (Input.GetKeyDown(KeyCode.W) && movementDirection != Vector2.down)
+            {
+                movementDirection = Vector2.up;
+            }
+            else if (Input.GetKeyDown(KeyCode.S) && movementDirection != Vector2.up)
+            {
+                movementDirection = Vector2.down;
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+       
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log(collision.tag);
+        if (collision.gameObject.tag == "SnakeBody")
         {
-            movementDirection = Vector2.right;
-        }
-        else if (Input.GetKeyDown(KeyCode.W))
-        {
-            movementDirection = Vector2.up;
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            movementDirection = Vector2.down;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
@@ -104,12 +118,22 @@ public class SnakeController : MonoBehaviour
     {
         if (snakeBodys.Count > 0)
         {
-            Transform bodyOfSnake = Instantiate(snakeBody);
-            bodyOfSnake.transform.position = snakeBodys[snakeBodys.Count - 1].position;
-            snakeBodys.Add(bodyOfSnake);
+            for (int i =0; i < length; i++)
+            {
+                Transform bodyOfSnake = Instantiate(snakeBody);
+                bodyOfSnake.transform.position = snakeBodys[snakeBodys.Count - 1].position;
+                snakeBodys.Add(bodyOfSnake);
+            }
+          
             if (powerUpService.getbScoreMultiplierEnabled())
             {
                 Score += ScoreMultipler * newScore;
+                gameplayUI.SetScore(Score);
+            }
+            else
+            {
+                Score +=  newScore;
+                gameplayUI.SetScore(Score);
             }
         }
 
@@ -120,9 +144,13 @@ public class SnakeController : MonoBehaviour
     {
         if (snakeBodys.Count > 0)
         {
-            Destroy(snakeBodys[snakeBodys.Count - 1].gameObject);
-            snakeBodys.RemoveAt(snakeBodys.Count - 1);
+            for (int i = 0; i < length; i++)
+            {
+                Destroy(snakeBodys[snakeBodys.Count - 1].gameObject);
+                snakeBodys.RemoveAt(snakeBodys.Count - 1);
+            }
             Score -= newScore;
+            gameplayUI.SetScore(Score);
         }
 
 
